@@ -1,0 +1,87 @@
+show databases;
+create database if not exists study;
+drop database study;
+use study;
+select database();
+
+show tables;
+create table if not exists tb_student(id int,name varchar(3),age int,yuwen decimal(4,2),shuxue decimal(4,2),birthday datetime);
+drop table tb_student;
+desc tb_student;
+
+insert tb_student(id,name,yuwen,birthday) values(1,"张三",77.7,"2021-03-14 00:00:21");
+insert tb_student values(2,"李四",18,77.7,88.8,"2020-03-13 00:04:21");
+insert tb_student values(3,"王五",19,59.5,58.9,now()),(4,"刘六",17,60.5,65.2,now());
+insert tb_student values(5,"木李四",18,77.777,88.8,now());
+insert tb_student values(6,"小李四",18,77.777,888.8,now());
+
+select * from tb_student;
+select name,yuwen from tb_student;
+select name,yuwen+shuxue from tb_student;
+select name,yuwen+shuxue total from tb_student;
+select * from tb_student order by yuwen;
+select * from tb_student order by yuwen desc;
+select * from tb_student order by yuwen desc,shuxue asc;
+select * from tb_student order by yuwen desc,shuxue desc;
+select * from tb_student limit 3;
+select * from tb_student limit 3 offset 3*pagenum;
+select * from tb_student order by yuwen limit 3;
+select distinct name from tb_student;--distinct根据某一字段进行数据去重
+select distinct name,age from tb_student;
+select * from tb_student where yuwen>70;
+select * from tb_student where shuxue<=>NULL;
+select * from tb_student where shuxue<>NULL;
+select * from tb_student where shuxue is NULL;
+select * from tb_student where shuxue is not NULL;
+select * from tb_student where name in("张三","李四");
+select * from tb_student where shuxue between 50 and 70;
+select * from tb_student where name like "张%";
+select * from tb_student where (shuxue>50 and shuxue<70);
+select * from tb_student where (name="张三" or shuxue>70);
+select * from tb_student where not name in("张三","李四");
+
+update tb_student set age=20,shuxue=96 where id=2;
+
+delete from tb_student where name="木李四";
+
+create table if not exists tb_class(id int not null,name varchar(32));
+create table if not exists tb_course(id int not null,name varchar(32) unique);
+create table if not exists tb_classes(id int primary key,name varchar(32));
+create table if not exists tb_course(id int,name varchar(32),primary key(id,name));
+create table if not exists tb_classes(id int not null unique,name varchar(32) not null unique);
+create table if not exists tb_classes(id int not null unique primary key,name varchar(32));
+create table if not exists classes(id int primary key,name varchar(32),`desc` varchar(100));
+create table if not exists course(id int primary key,name varchar(32));
+create table if not exists student(id int primary key,sn int not null unique,name varchar(32),qq_email varchar(32),classes_id int ,course_id int,foreign key(classes_id) references classes(id),foreign key(course_id) references course(id));
+create table if not exists tb_stu(id int primary key,sex varchar(1),check(sex="男" or sex="女"));
+create table if not exists student(id int primary key auto_increment comment '学生信息id',sn int not null unique comment '学号',name varchar(32) comment '姓名',qq_email varchar(32) default 'test@qq.com' comment 'qq邮箱',classes_id int comment '所在班级ID',foreign key(classes_id) references classes(id));
+create table if not exists emp(id int primary key auto_increment,name varchar(20) not null,role varchar(20) not null,salary numeric(11,2));
+	 
+alter table tb_course modify name varchar(32) not null unique;
+
+select count(*) from emp;
+select count(*) from emp where salary>=1000;
+select sum(salary) from emp;
+select avg(*) from emp;
+select max(salary) from emp;
+select min(salary) from emp;
+select role,avg(salary) from emp group by role;
+select role,avg(salary) from emp group by role having avg(salary)>1000;
+select * from aaa join bbb;
+select * from aaa join bbb on aaa.id=bbb.id;
+select * from aaa left join bbb on aaa.id=bbb.id;
+select * from aaa right join bbb on aaa.id=bbb.id;
+select * from aaa a join aaa b;
+select student.name,course.name course,score.score score from student join score on score.student_id=student.id joing course on score.courese_id=course.id where student.name="张三" and course.name="Java";
+select score1.student_id score1.score Java,score2.score "计算机原理" from score score1 join score score2 on score1.student_id=score2.student_id where score1.course_id=1 and score2.course_id=3 and score1.score>score2.score;
+select * from student where classes_id=(select classes_id from student where name="张三");
+select * from course where id<3 union select * from course where name="英文";
+
+show index from classes;
+
+create index index_name on classes(name);
+
+drop index index_name on classes;
+
+start transaction;
+rollback/commit;
